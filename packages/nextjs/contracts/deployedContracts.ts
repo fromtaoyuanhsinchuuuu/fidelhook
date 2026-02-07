@@ -6,8 +6,8 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
   31337: {
-    YourContract: {
-      address: "0x700b6a60ce7eaaea56f065753d8dcb9653dbad35",
+    LoyaltyHook: {
+      address: "0xa15bb66138824a1c7167f5e85b957d04dd34e468",
       abi: [
         {
           type: "constructor",
@@ -21,18 +21,148 @@ const deployedContracts = {
           stateMutability: "nonpayable",
         },
         {
-          type: "receive",
-          stateMutability: "payable",
-        },
-        {
           type: "function",
-          name: "greeting",
+          name: "BASE_FEE",
           inputs: [],
           outputs: [
             {
               name: "",
-              type: "string",
-              internalType: "string",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "DISCOUNTED_FEE",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "STREAK_THRESHOLD",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "STREAK_WINDOW",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "afterSwap",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "beforeSwap",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "amount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getFeeForUser",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUserStreakInfo",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "lastTradeTimestamp",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "streakCount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "totalVolume",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "currentFee",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "nextDeadline",
+              type: "uint256",
+              internalType: "uint256",
             },
           ],
           stateMutability: "view",
@@ -52,46 +182,25 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "premium",
-          inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "setGreeting",
+          name: "simulateTrade",
           inputs: [
             {
-              name: "_newGreeting",
-              type: "string",
-              internalType: "string",
+              name: "user",
+              type: "address",
+              internalType: "address",
             },
-          ],
-          outputs: [],
-          stateMutability: "payable",
-        },
-        {
-          type: "function",
-          name: "totalCounter",
-          inputs: [],
-          outputs: [
             {
-              name: "",
+              name: "amount",
               type: "uint256",
               internalType: "uint256",
             },
           ],
-          stateMutability: "view",
+          outputs: [],
+          stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "userGreetingCounter",
+          name: "userStreaks",
           inputs: [
             {
               name: "",
@@ -101,7 +210,17 @@ const deployedContracts = {
           ],
           outputs: [
             {
-              name: "",
+              name: "lastTradeTimestamp",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "streakCount",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "totalVolume",
               type: "uint256",
               internalType: "uint256",
             },
@@ -109,36 +228,48 @@ const deployedContracts = {
           stateMutability: "view",
         },
         {
-          type: "function",
-          name: "withdraw",
-          inputs: [],
-          outputs: [],
-          stateMutability: "nonpayable",
-        },
-        {
           type: "event",
-          name: "GreetingChange",
+          name: "StreakUpdated",
           inputs: [
             {
-              name: "greetingSetter",
+              name: "user",
               type: "address",
               indexed: true,
               internalType: "address",
             },
             {
-              name: "newGreeting",
-              type: "string",
+              name: "newStreak",
+              type: "uint256",
               indexed: false,
-              internalType: "string",
+              internalType: "uint256",
             },
             {
-              name: "premium",
-              type: "bool",
+              name: "discountApplied",
+              type: "uint256",
               indexed: false,
-              internalType: "bool",
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "TradeExecuted",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              indexed: true,
+              internalType: "address",
             },
             {
-              name: "value",
+              name: "amount",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "timestamp",
               type: "uint256",
               indexed: false,
               internalType: "uint256",
@@ -148,10 +279,12 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 2,
+      deployedOnBlock: 1,
     },
+  },
+  11155111: {
     LoyaltyHook: {
-      address: "0xa15bb66138824a1c7167f5e85b957d04dd34e468",
+      address: "0xcE5c5117EA37c84732BbBAb1410eDD28C985d4Ce",
       abi: [
         {
           type: "constructor",
