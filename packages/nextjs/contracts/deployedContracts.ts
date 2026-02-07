@@ -148,7 +148,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 1,
+      deployedOnBlock: 2,
     },
     LoyaltyHook: {
       address: "0xa15bb66138824a1c7167f5e85b957d04dd34e468",
@@ -423,7 +423,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 2,
+      deployedOnBlock: 1,
     },
   },
 } as const;
