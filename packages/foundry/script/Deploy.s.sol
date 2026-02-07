@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 import "./DeployHelpers.s.sol";
 import { DeployYourContract } from "./DeployYourContract.s.sol";
+import { DeployLoyaltyHook } from "./DeployLoyaltyHook.s.sol";
 
 /**
  * @notice Main deployment script for all contracts
@@ -17,6 +18,10 @@ contract DeployScript is ScaffoldETHDeploy {
 
         DeployYourContract deployYourContract = new DeployYourContract();
         deployYourContract.run();
+
+        // Deploy LoyaltyHook
+        DeployLoyaltyHook deployLoyaltyHook = new DeployLoyaltyHook();
+        deployLoyaltyHook.run();
 
         // Deploy another contract
         // DeployMyContract myContract = new DeployMyContract();

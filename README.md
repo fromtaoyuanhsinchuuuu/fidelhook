@@ -1,11 +1,14 @@
-# 🏗 Scaffold-ETH 2
+# 🏗 FidelHook - Loyalty Rewards for DeFi
 
 <h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
+  <a href="http://localhost:3001">Live Demo</a> |
+  <a href="https://docs.uniswap.org/sdk/v4/overview">Uniswap v4 Docs</a> |
+  <a href="https://docs.scaffoldeth.io">Scaffold-ETH 2 Docs</a>
 </h4>
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+🔥 **FidelHook** is a Uniswap v4 Hook that rewards users with discounted trading fees for maintaining consistent trading streaks. Built for the HackMoney 2026 hackathon in just 1 day!
+
+**Live Demo:** [http://localhost:3001](http://localhost:3001) | **Project URL:** `fidelhook.higoburo.xyz`
 
 > [!NOTE]
 > 🤖 Scaffold-ETH 2 is AI-ready! It has everything agents need to build on Ethereum. Check `.agents/`, `.claude/`, `.opencode` or `.cursor/` for more info.
@@ -19,6 +22,79 @@
 - 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
 
 ![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+
+## 🎯 What is FidelHook?
+
+FidelHook solves the "mercenary capital" problem in DeFi by creating on-chain loyalty incentives:
+
+- **Track Trading Streaks**: Users earn discounts for trading consistently.
+- **Dynamic Fees**: 0.30% base fee drops to 0.15% after 3+ consecutive days.
+- **Gamified Experience**: Visual fire animations, countdown timers, and progress tracking.
+
+### How It Works
+
+1. **Trade Once Per Day**: Make at least one trade every 24 hours.
+2. **Build Your Streak**: Each consecutive day adds to your streak counter.
+3. **Earn Discounts**: After 3+ days, trading fees drop from 0.30% to 0.15%.
+4. **Stay Loyal**: Miss a day and your streak resets. Keep trading to rebuild it!
+
+## 🚀 Quickstart
+
+1. Install dependencies:
+```bash
+yarn install
+```
+
+2. Run a local network in the first terminal:
+```bash
+yarn chain
+```
+
+3. On a second terminal, deploy the contracts:
+```bash
+yarn deploy
+```
+
+4. On a third terminal, start your NextJS app:
+```bash
+yarn start
+```
+
+Visit your app on: `http://localhost:3001` (or `http://localhost:3000`). Go to the `/trade` page to see the loyalty interface.
+
+## 🧪 Testing
+
+Run smart contract tests with `forge test`:
+```bash
+cd packages/foundry
+forge test --match-path test/LoyaltyHook.t.sol
+```
+
+## 🛠️ Technical Implementation
+
+### Smart Contract (`LoyaltyHook.sol`)
+
+The core contract implements:
+- **User Streak Tracking**: `mapping(address => UserStreak)`
+- **Dynamic Fee Calculation**: Based on streak length
+- **24-Hour Windows**: Streaks reset if users miss the window
+- **Event Emission**: `StreakUpdated` and `TradeExecuted` events
+
+### Frontend Features
+
+1. **Streak Visualization**: Animated fire icons showing current streak
+2. **Countdown Timer**: Real-time deadline for next trade
+3. **Fee Comparison**: Shows base vs. discounted fees
+4. **Trade History**: Recent streak updates and events
+5. **Wallet Integration**: RainbowKit + Wagmi for seamless connection
+
+## 🔮 Future Enhancements
+
+1. **Real Uniswap v4 Integration**: Connect to actual PoolManager
+2. **Multi-Pool Support**: Track streaks across different trading pairs
+3. **Advanced Discount Tiers**: More granular fee reductions
+4. **Token Rewards**: ERC20 rewards for high-volume traders
+5. **NFT Badges**: Soulbound NFTs for milestone achievements
 
 ## Requirements
 
