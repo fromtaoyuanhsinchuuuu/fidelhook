@@ -3,13 +3,21 @@ pragma solidity ^0.8.0;
 
 // Simplified Uniswap v4 Hook interface for demo
 interface IPoolManager {
-    function getPool(address token0, address token1, uint24 fee) external view returns (address pool);
+    function getPool(
+        address token0,
+        address token1,
+        uint24 fee
+    ) external view returns (address pool);
 }
 
 // For simplicity, we'll create a standalone loyalty system that tracks streaks
 contract LoyaltyHook {
     // State Variables
     address public immutable owner;
+
+    // User registry for demo reset-all functionality
+    address[] public users;
+    mapping(address => bool) public isUser;
 
     // User streak tracking
     struct UserStreak {
@@ -27,8 +35,17 @@ contract LoyaltyHook {
     uint256 public constant STREAK_THRESHOLD = 3; // Need 3+ days for discount
 
     // Events
-    event StreakUpdated(address indexed user, uint256 newStreak, uint256 discountApplied);
-    event TradeExecuted(address indexed user, uint256 amount, uint256 timestamp);
+    event StreakUpdated(
+        address indexed user,
+        uint256 newStreak,
+        uint256 discountApplied
+    );
+    event TradeExecuted(
+        address indexed user,
+        uint256 amount,
+        uint256 timestamp
+    );
+    event StreaksReset(uint256 usersReset);
 
     // Constructor
     constructor(address _owner) {
@@ -39,6 +56,13 @@ contract LoyaltyHook {
     modifier onlyOwner() {
         require(msg.sender == owner, "Not owner");
         _;
+    }
+
+    function _trackUser(address user) internal {
+        if (!isUser[user]) {
+            isUser[user] = true;
+            users.push(user);
+        }
     }
 
     /**
@@ -74,6 +98,7 @@ contract LoyaltyHook {
      * In real Uniswap v4, this would be called by PoolManager after swap completes
      */
     function afterSwap(address user) public {
+        _trackUser(user);
         UserStreak storage streak = userStreaks[user];
 
         // Check if user has traded before
@@ -82,7 +107,8 @@ contract LoyaltyHook {
             streak.streakCount = 1;
         } else {
             // Check if within streak window (24 hours)
-            uint256 timeSinceLastTrade = block.timestamp - streak.lastTradeTimestamp;
+            uint256 timeSinceLastTrade = block.timestamp -
+                streak.lastTradeTimestamp;
 
             if (timeSinceLastTrade <= STREAK_WINDOW) {
                 // Maintain streak
@@ -103,13 +129,19 @@ contract LoyaltyHook {
     /**
      * @dev Get user streak info for frontend display
      */
-    function getUserStreakInfo(address user) external view returns (
-        uint256 lastTradeTimestamp,
-        uint256 streakCount,
-        uint256 totalVolume,
-        uint256 currentFee,
-        uint256 nextDeadline
-    ) {
+    function getUserStreakInfo(
+        address user
+    )
+        external
+        view
+        returns (
+            uint256 lastTradeTimestamp,
+            uint256 streakCount,
+            uint256 totalVolume,
+            uint256 currentFee,
+            uint256 nextDeadline
+        )
+    {
         UserStreak memory streak = userStreaks[user];
 
         lastTradeTimestamp = streak.lastTradeTimestamp;
@@ -129,6 +161,7 @@ contract LoyaltyHook {
      * @dev For demo purposes - simulate a trade to test the system
      */
     function simulateTrade(address user, uint256 amount) external {
+        _trackUser(user);
         // Call beforeSwap to get fee
         uint256 fee = getFeeForUser(user);
 
@@ -141,7 +174,8 @@ contract LoyaltyHook {
         if (streak.lastTradeTimestamp == 0) {
             streak.streakCount = 1;
         } else {
-            uint256 timeSinceLastTrade = block.timestamp - streak.lastTradeTimestamp;
+            uint256 timeSinceLastTrade = block.timestamp -
+                streak.lastTradeTimestamp;
             if (timeSinceLastTrade <= STREAK_WINDOW) {
                 streak.streakCount += 1;
             } else {
@@ -154,5 +188,19 @@ contract LoyaltyHook {
         // Emit events
         emit TradeExecuted(user, amount, block.timestamp);
         emit StreakUpdated(user, streak.streakCount, fee);
+    }
+
+    /**
+     * @dev Owner-only demo utility to reset streaks for all known users
+     * Does NOT wipe total volume
+     */
+    function resetAllStreaks() external onlyOwner {
+        uint256 count = users.length;
+        for (uint256 i = 0; i < count; i++) {
+            UserStreak storage streak = userStreaks[users[i]];
+            streak.lastTradeTimestamp = 0;
+            streak.streakCount = 0;
+        }
+        emit StreaksReset(count);
     }
 }
