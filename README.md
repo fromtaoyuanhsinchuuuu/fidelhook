@@ -25,11 +25,9 @@
 
 ## 🎯 What is FidelHook?
 
-FidelHook solves the "mercenary capital" problem in DeFi by creating on-chain loyalty incentives:
+FidelHook is a loyalty incentive protocol architected on the Uniswap v4 Hook framework. We leverage v4’s custom hook capabilities to transform user trading continuity—or "streaks"—into real-time, on-chain fee discounts.
 
-- **Track Trading Streaks**: Users earn discounts for trading consistently.
-- **Dynamic Fees**: 0.30% base fee drops to 0.15% after 3+ consecutive days.
-- **Gamified Experience**: Visual fire animations, countdown timers, and progress tracking.
+Throughout the development process, we conducted deep research into the Uniswap v4 beforeSwap and afterSwap lifecycles to implement our dynamic fee calculation engine. For the current demonstration, we utilized a high-fidelity hook simulation environment to accurately showcase the 24-hour streak logic and complex on-chain state transitions. In production, this architecture is designed to deploy directly to the Uniswap v4 PoolManager, integrating with real liquidity pools via Alchemy’s Sepolia nodes to provide a fully decentralized and personalized liquidity incentive layer.
 
 ### How It Works
 
@@ -60,25 +58,23 @@ yarn deploy
 yarn start
 ```
 
-Visit your app on: `http://localhost:3001` (or `http://localhost:3000`). Go to the `/trade` page to see the loyalty interface.
-
-## 🧪 Testing
-
-Run smart contract tests with `forge test`:
-```bash
-cd packages/foundry
-forge test --match-path test/LoyaltyHook.t.sol
-```
+Visit your app on: `http://localhost:3000`. Go to the `/trade` page to see the industrial Cyber-Utilitarian terminal interface.
 
 ## 🛠️ Technical Implementation
+
+### Tech Stack
+- **Smart Contracts**: Developed in **Solidity 0.8.x** using **Foundry** for compilation, deployment, and testing.
+- **Frontend**: Built with **Next.js 15 (App Router)**, **TypeScript**, and **Tailwind CSS**, featuring a custom **Cyber-Utilitarian** terminal design.
+- **Web3 Integration**: Powered by **Wagmi**, **Viem**, and **RainbowKit**, utilizing Scaffold-ETH 2's custom hooks for seamless on-chain telemetry.
+- **Infrastructure**: Supported by **Alchemy** RPC nodes on the **Sepolia** testnet.
 
 ### Smart Contract (`LoyaltyHook.sol`)
 
 The core contract implements:
 - **User Streak Tracking**: `mapping(address => UserStreak)`
-- **Dynamic Fee Calculation**: Based on streak length
-- **24-Hour Windows**: Streaks reset if users miss the window
-- **Event Emission**: `StreakUpdated` and `TradeExecuted` events
+- **Dynamic Fee Calculation**: Logic prepared for Uniswap v4 hook lifecycle integration.
+- **24-Hour Windows**: Precise timestamp validation to ensure trading consistency.
+- **Event Emission**: `StreakUpdated` and `TradeExecuted` events for real-time frontend synchronization.
 
 ### Frontend Features
 

@@ -279,12 +279,12 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 1,
+      deployedOnBlock: 7111531,
     },
   },
   11155111: {
     LoyaltyHook: {
-      address: "0xcE5c5117EA37c84732BbBAb1410eDD28C985d4Ce",
+      address: "0x4d3cAde1D51c18279F444c38Dc49d0361e7e03C6",
       abi: [
         {
           type: "constructor",
@@ -556,7 +556,7 @@ const deployedContracts = {
         },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 1,
+      deployedOnBlock: 7111531,
     },
   },
 } as const;
