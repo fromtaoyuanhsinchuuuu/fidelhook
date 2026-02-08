@@ -19,6 +19,7 @@ const TradePage: NextPage = () => {
   const [tradeAmount, setTradeAmount] = useState("0.01");
   const [selectedToken, setSelectedToken] = useState("ETH");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeStrategy, setActiveStrategy] = useState("UNISWAP_SWAP");
 
   // Read user streak info from contract
   const { data: streakInfo, refetch: refetchStreakInfo } = useScaffoldReadContract({
@@ -190,6 +191,23 @@ const TradePage: NextPage = () => {
                 </h2>
 
                 <div className="space-y-10">
+                  {/* Strategy Selector */}
+                  <div className="flex gap-4 border-b-2 border-[#111] pb-10">
+                    {[
+                      { id: "UNISWAP_SWAP", name: "UNISWAP V4 SWAP", icon: <FireIcon className="h-5 w-5" /> },
+                      { id: "LIDO_STAKE", name: "LIDO LIQUIDITY", icon: <BoltIcon className="h-5 w-5" /> },
+                    ].map(strategy => (
+                      <button
+                        key={strategy.id}
+                        onClick={() => setActiveStrategy(strategy.id)}
+                        className={`flex-1 flex items-center justify-center gap-3 py-4 border-2 font-black text-xs tracking-widest transition-all duration-300 ${activeStrategy === strategy.id ? "border-[#ff9900] bg-[#ff9900]/10 text-[#ff9900] shadow-[0_0_15px_rgba(255,153,0,0.2)]" : "border-[#1a1a1a] text-[#444] hover:border-[#333]"}`}
+                      >
+                        {strategy.icon}
+                        {strategy.name}
+                      </button>
+                    ))}
+                  </div>
+
                   <div className="group/input">
                     <div className="flex items-center justify-between mb-4">
                       <label className="text-[10px] font-mono uppercase text-[#666] tracking-[0.3em] flex items-center gap-2 font-bold">
@@ -285,7 +303,9 @@ const TradePage: NextPage = () => {
                             <BoltIcon className="h-10 w-10 relative z-10" />
                             <div className="absolute inset-0 bg-[#ff9900] blur-lg opacity-0 group-hover:opacity-50 transition-opacity"></div>
                           </div>
-                          <span className="tracking-tighter">COMMIT_TRADE_TELEMETRY</span>
+                          <span className="tracking-tighter">
+                            {activeStrategy === "UNISWAP_SWAP" ? "COMMIT_SWAP_TELEMETRY" : "ENGAGE_LIQUIDITY_PROTOCOL"}
+                          </span>
                         </>
                       )}
                     </div>
@@ -365,9 +385,23 @@ const TradePage: NextPage = () => {
                   </div>
                 </div>
                 <div
-                  className={`w-24 h-24 flex items-center justify-center border-2 ${isHot ? "border-[#ff9900] shadow-[0_0_30px_rgba(255,153,0,0.2)] bg-[#ff9900]/5" : "border-[#222] bg-[#111]/50"} transition-all duration-700`}
+                  className={`w-24 h-24 flex items-center justify-center border-2 transition-all duration-700 ${
+                    streakCount >= 3
+                      ? "border-[#ff9900] shadow-[0_0_50px_rgba(255,153,0,0.4)] bg-[#ff9900]/10"
+                      : streakCount > 0
+                        ? "border-[#ff9900]/50 shadow-[0_0_20px_rgba(255,153,0,0.2)] bg-[#ff9900]/5"
+                        : "border-[#222] bg-[#111]/50"
+                  }`}
                 >
-                  <FireIcon className={`h-16 w-16 ${isHot ? "text-[#ff9900] animate-pulse" : "text-[#222]"}`} />
+                  <FireIcon
+                    className={`h-16 w-16 transition-all duration-700 ${
+                      streakCount >= 3
+                        ? "text-[#ff9900] animate-pulse drop-shadow-[0_0_10px_#ff9900]"
+                        : streakCount > 0
+                          ? "text-[#ff9900]/80"
+                          : "text-[#222]"
+                    }`}
+                  />
                 </div>
               </div>
 
